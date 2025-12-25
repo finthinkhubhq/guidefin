@@ -15,7 +15,10 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.fincal.app"
+      "bundleIdentifier": "com.fincal.app",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -33,6 +36,13 @@
       "expo-font",
       "expo-secure-store",
       "expo-router"
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "19624d18-3289-4f09-9726-b37fe87dab75"
+      }
+    },
+    "owner": "tarun1720s-organization"
   }
 }
