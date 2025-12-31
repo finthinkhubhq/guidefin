@@ -2,7 +2,7 @@
  * Monte Carlo Simulation Engine for FinCal
  * 
  * Purpose:
- * Simulate 1000+ market scenarios to determine the probability of a retirement portfolio surviving
+ * Simulate 3000+ market scenarios to determine the probability of a retirement portfolio surviving
  * for a specific duration.
  * 
  * Assumptions (Indian Context - User Modified):
