@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, Alert } from 'react-native';
+import { View, StyleSheet, Alert } from 'react-native';
+import KeyboardSafeLayout from '../../src/components/KeyboardSafeLayout';
 import {
   Text,
   TextInput,
@@ -189,95 +190,97 @@ export default function SettingsScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.header}>
-          <Text variant="headlineMedium" style={styles.title}>
-            Category Management
-          </Text>
-          <Text variant="bodyMedium" style={styles.subtitle}>
-            Manage your expense categories
-          </Text>
+      <KeyboardSafeLayout>
+        <View style={styles.scrollContent}>
+          <View style={styles.header}>
+            <Text variant="headlineMedium" style={styles.title}>
+              Category Management
+            </Text>
+            <Text variant="bodyMedium" style={styles.subtitle}>
+              Manage your expense categories
+            </Text>
+          </View>
+
+          {/* Add New Category */}
+          <Card style={styles.card}>
+            <Card.Content>
+              <Text variant="titleLarge" style={styles.sectionTitle}>
+                Add New Category
+              </Text>
+              <Divider style={styles.divider} />
+
+              <TextInput
+                label="Category Name"
+                mode="outlined"
+                value={newCategoryName}
+                onChangeText={setNewCategoryName}
+                style={styles.input}
+                placeholder="e.g., Travel, Education"
+              />
+
+              <Button
+                mode="contained"
+                onPress={handleAddCategory}
+                style={styles.addButton}
+                disabled={loading}
+              >
+                Add Category
+              </Button>
+            </Card.Content>
+          </Card>
+
+          {/* Categories List */}
+          <Card style={styles.card}>
+            <Card.Content>
+              <Text variant="titleLarge" style={styles.sectionTitle}>
+                Categories
+              </Text>
+              <Divider style={styles.divider} />
+
+              {categories.length === 0 ? (
+                <Text style={styles.emptyText}>No categories yet</Text>
+              ) : (
+                categories.map((category) => (
+                  <List.Item
+                    key={category.id}
+                    title={category.name}
+                    description={category.isDefault ? 'Default category' : 'Custom category'}
+                    left={(props) => (
+                      <List.Icon
+                        {...props}
+                        icon={category.isDefault ? 'lock' : 'tag'}
+                        color={category.isDefault ? '#757575' : '#6200ee'}
+                      />
+                    )}
+                    right={(props) => (
+                      <View style={styles.actionButtons}>
+                        {!category.isDefault && (
+                          <>
+                            <IconButton
+                              {...props}
+                              icon="pencil"
+                              size={20}
+                              onPress={() => handleStartEdit(category)}
+                            />
+                            <IconButton
+                              {...props}
+                              icon="delete"
+                              size={20}
+                              iconColor="#b00020"
+                              onPress={() => handleDeleteCategory(category)}
+                            />
+                          </>
+                        )}
+                      </View>
+                    )}
+                    style={styles.listItem}
+                  />
+                ))
+              )}
+            </Card.Content>
+          </Card>
         </View>
-
-        {/* Add New Category */}
-        <Card style={styles.card}>
-          <Card.Content>
-            <Text variant="titleLarge" style={styles.sectionTitle}>
-              Add New Category
-            </Text>
-            <Divider style={styles.divider} />
-
-            <TextInput
-              label="Category Name"
-              mode="outlined"
-              value={newCategoryName}
-              onChangeText={setNewCategoryName}
-              style={styles.input}
-              placeholder="e.g., Travel, Education"
-            />
-
-            <Button
-              mode="contained"
-              onPress={handleAddCategory}
-              style={styles.addButton}
-              disabled={loading}
-            >
-              Add Category
-            </Button>
-          </Card.Content>
-        </Card>
-
-        {/* Categories List */}
-        <Card style={styles.card}>
-          <Card.Content>
-            <Text variant="titleLarge" style={styles.sectionTitle}>
-              Categories
-            </Text>
-            <Divider style={styles.divider} />
-
-            {categories.length === 0 ? (
-              <Text style={styles.emptyText}>No categories yet</Text>
-            ) : (
-              categories.map((category) => (
-                <List.Item
-                  key={category.id}
-                  title={category.name}
-                  description={category.isDefault ? 'Default category' : 'Custom category'}
-                  left={(props) => (
-                    <List.Icon
-                      {...props}
-                      icon={category.isDefault ? 'lock' : 'tag'}
-                      color={category.isDefault ? '#757575' : '#6200ee'}
-                    />
-                  )}
-                  right={(props) => (
-                    <View style={styles.actionButtons}>
-                      {!category.isDefault && (
-                        <>
-                          <IconButton
-                            {...props}
-                            icon="pencil"
-                            size={20}
-                            onPress={() => handleStartEdit(category)}
-                          />
-                          <IconButton
-                            {...props}
-                            icon="delete"
-                            size={20}
-                            iconColor="#b00020"
-                            onPress={() => handleDeleteCategory(category)}
-                          />
-                        </>
-                      )}
-                    </View>
-                  )}
-                  style={styles.listItem}
-                />
-              ))
-            )}
-          </Card.Content>
-        </Card>
-      </ScrollView>
+      </KeyboardSafeLayout>
 
       {/* Edit Dialog */}
       <Portal>

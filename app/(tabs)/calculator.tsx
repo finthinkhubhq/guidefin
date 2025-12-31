@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Alert, TouchableOpacity, Dimensions } from 'react-native';
+import { View, StyleSheet, Alert, TouchableOpacity, Dimensions } from 'react-native';
+import KeyboardSafeLayout from '../../src/components/KeyboardSafeLayout';
 import { Text, TextInput as PaperInput } from 'react-native-paper';
 import { useExpensesStore, useSettingsStore } from '../../src/store/atoms';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -161,137 +162,138 @@ export default function CalculatorScreen() {
           </View>
         </View>
 
-        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-
-          {/* Section: Expenses */}
-          <GlassCard style={styles.sectionCard}>
-            <View style={styles.cardHeaderRow}>
-              <Text style={styles.sectionTitle}>Monthly Expenses</Text>
-              <View style={styles.totalBadge}>
-                <Text style={styles.totalBadgeText}>{formatShortCurrency(totalMonthly)}/mo</Text>
-              </View>
-            </View>
-
-            <View style={styles.tableHeader}>
-              <Text style={[styles.colHead, { flex: 1.5 }]}>Category</Text>
-              <Text style={styles.colHead}>Monthly</Text>
-              <Text style={styles.colHead}>Annual</Text>
-            </View>
-
-            <View style={styles.expenseList}>
-              {expenses.map((expense) => (
-                <View key={expense.id} style={styles.row}>
-                  <Text style={[styles.rowText, { flex: 1.5 }]}>{expense.name}</Text>
-                  <PaperInput
-                    style={styles.input}
-                    textColor={theme.colors.text.primary}
-                    underlineColor="transparent"
-                    activeUnderlineColor={theme.colors.text.accent}
-                    value={expense.monthly === 0 ? '' : expense.monthly.toString()}
-                    onChangeText={(v) => handleMonthlyChange(expense.id, v)}
-                    keyboardType="numeric"
-                    placeholder="0"
-                    placeholderTextColor={theme.colors.text.muted}
-                    dense
-                  />
-                  <PaperInput
-                    style={styles.input}
-                    textColor={theme.colors.text.secondary}
-                    underlineColor="transparent"
-                    activeUnderlineColor="transparent"
-                    value={expense.annual === 0 ? '' : expense.annual.toString()}
-                    onChangeText={(v) => handleAnnualChange(expense.id, v)}
-                    keyboardType="numeric"
-                    placeholder="0"
-                    placeholderTextColor={theme.colors.text.muted}
-                    dense
-                  />
-                </View>
-              ))}
-            </View>
-          </GlassCard>
-
-          {/* Section: Retirement Config */}
-          <GlassCard style={styles.sectionCard}>
-            <Text style={styles.sectionTitle}>Settings</Text>
-            <View style={styles.configRow}>
-              <View style={styles.configItem}>
-                <Text style={styles.configLabel}>Current Age</Text>
-                <PaperInput
-                  style={styles.configInput}
-                  textColor={theme.colors.text.primary}
-                  value={settings.currentAge.toString()}
-                  onChangeText={(v) => setSettings({ ...settings, currentAge: parseFloat(v) || 0 })}
-                  keyboardType="numeric"
-                  dense
-                  underlineColor='transparent'
-                  activeUnderlineColor={theme.colors.text.accent}
-                />
-              </View>
-              <View style={styles.configItem}>
-                <Text style={styles.configLabel}>Retirement Age</Text>
-                <PaperInput
-                  style={styles.configInput}
-                  textColor={theme.colors.text.primary}
-                  value={settings.retirementAge.toString()}
-                  onChangeText={(v) => setSettings({ ...settings, retirementAge: parseFloat(v) || 0 })}
-                  keyboardType="numeric"
-                  dense
-                  underlineColor='transparent'
-                  activeUnderlineColor={theme.colors.text.accent}
-                />
-              </View>
-              <View style={styles.configItem}>
-                <Text style={styles.configLabel}>Inflation (%)</Text>
-                <PaperInput
-                  style={styles.configInput}
-                  textColor={theme.colors.text.primary}
-                  value={settings.inflation.toString()}
-                  onChangeText={(v) => setSettings({ ...settings, inflation: parseFloat(v) || 0 })}
-                  keyboardType="numeric"
-                  dense
-                  underlineColor='transparent'
-                  activeUnderlineColor={theme.colors.text.accent}
-                />
-              </View>
-            </View>
-          </GlassCard>
-
-          <View style={{ marginVertical: 10 }}>
-            <PremiumButton title="Calculate Future" onPress={calculateCorpus} />
-          </View>
-
-          {/* Results Area */}
-          {corpusResults && (
+        <KeyboardSafeLayout>
+          <View style={styles.scrollContent}>
+            {/* Section: Expenses */}
             <GlassCard style={styles.sectionCard}>
-              <Text style={[styles.sectionTitle, { textAlign: 'center', marginBottom: 5 }]}>
-                Corpus Required at {settings.retirementAge}
-              </Text>
-              <Text style={{ textAlign: 'center', color: theme.colors.text.secondary, marginBottom: 20 }}>
-                Future Expense: {formatCurrency(corpusResults.futureProjectedExpense)} / yr
-              </Text>
-
-              {renderChart()}
-
-              <View style={styles.resultsGrid}>
-                <View style={styles.resultItem}>
-                  <Text style={styles.resultLabel}>Conservative (33x)</Text>
-                  <Text style={[styles.resultValue, { color: '#E94560' }]}>{formatShortCurrency(corpusResults.conservative)}</Text>
+              <View style={styles.cardHeaderRow}>
+                <Text style={styles.sectionTitle}>Monthly Expenses</Text>
+                <View style={styles.totalBadge}>
+                  <Text style={styles.totalBadgeText}>{formatShortCurrency(totalMonthly)}/mo</Text>
                 </View>
-                <View style={styles.resultItem}>
-                  <Text style={styles.resultLabel}>Moderate (30x)</Text>
-                  <Text style={[styles.resultValue, { color: '#FFD369' }]}>{formatShortCurrency(corpusResults.moderate)}</Text>
+              </View>
+
+              <View style={styles.tableHeader}>
+                <Text style={[styles.colHead, { flex: 1.5 }]}>Category</Text>
+                <Text style={styles.colHead}>Monthly</Text>
+                <Text style={styles.colHead}>Annual</Text>
+              </View>
+
+              <View style={styles.expenseList}>
+                {expenses.map((expense) => (
+                  <View key={expense.id} style={styles.row}>
+                    <Text style={[styles.rowText, { flex: 1.5 }]}>{expense.name}</Text>
+                    <PaperInput
+                      style={styles.input}
+                      textColor={theme.colors.text.primary}
+                      underlineColor="transparent"
+                      activeUnderlineColor={theme.colors.text.accent}
+                      value={expense.monthly === 0 ? '' : expense.monthly.toString()}
+                      onChangeText={(v) => handleMonthlyChange(expense.id, v)}
+                      keyboardType="numeric"
+                      placeholder="0"
+                      placeholderTextColor={theme.colors.text.muted}
+                      dense
+                    />
+                    <PaperInput
+                      style={styles.input}
+                      textColor={theme.colors.text.secondary}
+                      underlineColor="transparent"
+                      activeUnderlineColor="transparent"
+                      value={expense.annual === 0 ? '' : expense.annual.toString()}
+                      onChangeText={(v) => handleAnnualChange(expense.id, v)}
+                      keyboardType="numeric"
+                      placeholder="0"
+                      placeholderTextColor={theme.colors.text.muted}
+                      dense
+                    />
+                  </View>
+                ))}
+              </View>
+            </GlassCard>
+
+            {/* Section: Retirement Config */}
+            <GlassCard style={styles.sectionCard}>
+              <Text style={styles.sectionTitle}>Settings</Text>
+              <View style={styles.configRow}>
+                <View style={styles.configItem}>
+                  <Text style={styles.configLabel}>Current Age</Text>
+                  <PaperInput
+                    style={styles.configInput}
+                    textColor={theme.colors.text.primary}
+                    value={settings.currentAge.toString()}
+                    onChangeText={(v) => setSettings({ ...settings, currentAge: parseFloat(v) || 0 })}
+                    keyboardType="numeric"
+                    dense
+                    underlineColor='transparent'
+                    activeUnderlineColor={theme.colors.text.accent}
+                  />
                 </View>
-                <View style={styles.resultItem}>
-                  <Text style={styles.resultLabel}>Optimistic (25x)</Text>
-                  <Text style={[styles.resultValue, { color: '#4ECCA3' }]}>{formatShortCurrency(corpusResults.optimistic)}</Text>
+                <View style={styles.configItem}>
+                  <Text style={styles.configLabel}>Retirement Age</Text>
+                  <PaperInput
+                    style={styles.configInput}
+                    textColor={theme.colors.text.primary}
+                    value={settings.retirementAge.toString()}
+                    onChangeText={(v) => setSettings({ ...settings, retirementAge: parseFloat(v) || 0 })}
+                    keyboardType="numeric"
+                    dense
+                    underlineColor='transparent'
+                    activeUnderlineColor={theme.colors.text.accent}
+                  />
+                </View>
+                <View style={styles.configItem}>
+                  <Text style={styles.configLabel}>Inflation (%)</Text>
+                  <PaperInput
+                    style={styles.configInput}
+                    textColor={theme.colors.text.primary}
+                    value={settings.inflation.toString()}
+                    onChangeText={(v) => setSettings({ ...settings, inflation: parseFloat(v) || 0 })}
+                    keyboardType="numeric"
+                    dense
+                    underlineColor='transparent'
+                    activeUnderlineColor={theme.colors.text.accent}
+                  />
                 </View>
               </View>
             </GlassCard>
-          )}
 
-          <View style={{ height: 100 }} />
-        </ScrollView>
+            <View style={{ marginVertical: 10 }}>
+              <PremiumButton title="Calculate Future" onPress={calculateCorpus} />
+            </View>
+
+            {/* Results Area */}
+            {corpusResults && (
+              <GlassCard style={styles.sectionCard}>
+                <Text style={[styles.sectionTitle, { textAlign: 'center', marginBottom: 5 }]}>
+                  Corpus Required at {settings.retirementAge}
+                </Text>
+                <Text style={{ textAlign: 'center', color: theme.colors.text.secondary, marginBottom: 20 }}>
+                  Future Expense: {formatCurrency(corpusResults.futureProjectedExpense)} / yr
+                </Text>
+
+                {renderChart()}
+
+                <View style={styles.resultsGrid}>
+                  <View style={styles.resultItem}>
+                    <Text style={styles.resultLabel}>Conservative (33x)</Text>
+                    <Text style={[styles.resultValue, { color: '#E94560' }]}>{formatShortCurrency(corpusResults.conservative)}</Text>
+                  </View>
+                  <View style={styles.resultItem}>
+                    <Text style={styles.resultLabel}>Moderate (30x)</Text>
+                    <Text style={[styles.resultValue, { color: '#FFD369' }]}>{formatShortCurrency(corpusResults.moderate)}</Text>
+                  </View>
+                  <View style={styles.resultItem}>
+                    <Text style={styles.resultLabel}>Optimistic (25x)</Text>
+                    <Text style={[styles.resultValue, { color: '#4ECCA3' }]}>{formatShortCurrency(corpusResults.optimistic)}</Text>
+                  </View>
+                </View>
+              </GlassCard>
+            )}
+
+            <View style={{ height: 100 }} />
+          </View>
+        </KeyboardSafeLayout>
       </SafeAreaView>
     </View>
   );

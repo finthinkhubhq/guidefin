@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, Platform, Dimensions, Image, TouchableOpacity, Pressable } from 'react-native';
+import { View, StyleSheet, Platform, Dimensions, Image, TouchableOpacity, Pressable } from 'react-native';
+import KeyboardSafeLayout from '../../src/components/KeyboardSafeLayout';
 import { Text, TextInput, Button } from 'react-native-paper';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -116,96 +117,96 @@ export default function SignInScreen() {
                     <Text style={styles.subtext}>Accurate details help us calculate your perfect retirement plan.</Text>
                 </View>
 
-                <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+                <KeyboardSafeLayout>
+                    <View style={styles.scrollContent}>
+                        {/* Name Input */}
+                        <View style={styles.inputGroup}>
+                            <Text style={styles.label}>Name</Text>
+                            <TextInput
+                                mode="outlined"
+                                value={name}
+                                onChangeText={handleNameChange}
+                                placeholder="Enter your name"
+                                placeholderTextColor="#A0AEC0"
+                                style={styles.inputOutlined}
+                                outlineStyle={styles.inputOutline}
+                                activeOutlineColor="#536DFE"
+                                selectionColor="#536DFE"
+                                left={<TextInput.Icon icon="account" color="#536DFE" />}
+                                theme={{ roundness: 12 }}
+                            />
+                        </View>
 
-                    {/* Name Input */}
-                    <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Name</Text>
-                        <TextInput
-                            mode="outlined"
-                            value={name}
-                            onChangeText={handleNameChange}
-                            placeholder="Enter your name"
-                            placeholderTextColor="#A0AEC0"
-                            style={styles.inputOutlined}
-                            outlineStyle={styles.inputOutline}
-                            activeOutlineColor="#536DFE"
-                            selectionColor="#536DFE"
-                            left={<TextInput.Icon icon="account" color="#536DFE" />}
-                            theme={{ roundness: 12 }}
-                        />
-                    </View>
+                        {/* Segmented Toggle */}
+                        <View style={styles.toggleWrapper}>
+                            <View style={styles.toggleContainer}>
+                                <TouchableOpacity
+                                    style={[styles.toggleBtn, inputMode === 'DOB' && styles.toggleBtnActive]}
+                                    onPress={() => setInputMode('DOB')}
+                                >
+                                    <Text style={[styles.toggleText, inputMode === 'DOB' && styles.toggleTextActive]}>Date of Birth</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={[styles.toggleBtn, inputMode === 'AGE' && styles.toggleBtnActive]}
+                                    onPress={() => setInputMode('AGE')}
+                                >
+                                    <Text style={[styles.toggleText, inputMode === 'AGE' && styles.toggleTextActive]}>Current Age</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
 
-                    {/* Segmented Toggle */}
-                    <View style={styles.toggleWrapper}>
-                        <View style={styles.toggleContainer}>
-                            <TouchableOpacity
-                                style={[styles.toggleBtn, inputMode === 'DOB' && styles.toggleBtnActive]}
-                                onPress={() => setInputMode('DOB')}
-                            >
-                                <Text style={[styles.toggleText, inputMode === 'DOB' && styles.toggleTextActive]}>Date of Birth</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={[styles.toggleBtn, inputMode === 'AGE' && styles.toggleBtnActive]}
-                                onPress={() => setInputMode('AGE')}
-                            >
-                                <Text style={[styles.toggleText, inputMode === 'AGE' && styles.toggleTextActive]}>Current Age</Text>
-                            </TouchableOpacity>
+                        {/* Dynamic Input Area */}
+                        <View style={styles.dynamicInputArea}>
+                            {inputMode === 'DOB' ? (
+                                <View>
+                                    <Pressable onPress={() => setShowDatePicker(true)}>
+                                        <View pointerEvents="none">
+                                            <TextInput
+                                                mode="outlined"
+                                                value={dobText}
+                                                placeholder="DD/MM/YYYY"
+                                                placeholderTextColor="#A0AEC0"
+                                                editable={false}
+                                                style={styles.inputOutlined}
+                                                outlineStyle={styles.inputOutline}
+                                                activeOutlineColor="#536DFE"
+                                                left={<TextInput.Icon icon="calendar" color="#536DFE" />}
+                                                theme={{ roundness: 12 }}
+                                            />
+                                        </View>
+                                    </Pressable>
+                                    {showDatePicker && (
+                                        <DateTimePicker
+                                            testID="dateTimePicker"
+                                            value={dob || new Date()}
+                                            mode="date"
+                                            display="default"
+                                            onChange={onDateChange}
+                                            minimumDate={new Date(1950, 0, 1)}
+                                        />
+                                    )}
+                                </View>
+                            ) : (
+                                <View>
+                                    <TextInput
+                                        mode="outlined"
+                                        value={age}
+                                        onChangeText={handleAgeChange}
+                                        placeholder="e.g. 30"
+                                        placeholderTextColor="#A0AEC0"
+                                        keyboardType="numeric"
+                                        style={styles.inputOutlined}
+                                        outlineStyle={styles.inputOutline}
+                                        activeOutlineColor="#536DFE"
+                                        selectionColor="#536DFE"
+                                        left={<TextInput.Icon icon="cake-variant" color="#536DFE" />}
+                                        theme={{ roundness: 12 }}
+                                    />
+                                </View>
+                            )}
                         </View>
                     </View>
-
-                    {/* Dynamic Input Area */}
-                    <View style={styles.dynamicInputArea}>
-                        {inputMode === 'DOB' ? (
-                            <View>
-                                <Pressable onPress={() => setShowDatePicker(true)}>
-                                    <View pointerEvents="none">
-                                        <TextInput
-                                            mode="outlined"
-                                            value={dobText}
-                                            placeholder="DD/MM/YYYY"
-                                            placeholderTextColor="#A0AEC0"
-                                            editable={false}
-                                            style={styles.inputOutlined}
-                                            outlineStyle={styles.inputOutline}
-                                            activeOutlineColor="#536DFE"
-                                            left={<TextInput.Icon icon="calendar" color="#536DFE" />}
-                                            theme={{ roundness: 12 }}
-                                        />
-                                    </View>
-                                </Pressable>
-                                {showDatePicker && (
-                                    <DateTimePicker
-                                        testID="dateTimePicker"
-                                        value={dob || new Date()}
-                                        mode="date"
-                                        display="default"
-                                        onChange={onDateChange}
-                                        minimumDate={new Date(1950, 0, 1)}
-                                    />
-                                )}
-                            </View>
-                        ) : (
-                            <View>
-                                <TextInput
-                                    mode="outlined"
-                                    value={age}
-                                    onChangeText={handleAgeChange}
-                                    placeholder="e.g. 30"
-                                    placeholderTextColor="#A0AEC0"
-                                    keyboardType="numeric"
-                                    style={styles.inputOutlined}
-                                    outlineStyle={styles.inputOutline}
-                                    activeOutlineColor="#536DFE"
-                                    selectionColor="#536DFE"
-                                    left={<TextInput.Icon icon="cake-variant" color="#536DFE" />}
-                                    theme={{ roundness: 12 }}
-                                />
-                            </View>
-                        )}
-                    </View>
-
-                </ScrollView>
+                </KeyboardSafeLayout>
 
                 {/* Sticky Footer */}
                 <View style={styles.footer}>

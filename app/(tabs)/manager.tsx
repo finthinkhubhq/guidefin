@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, Alert } from 'react-native';
+import { View, StyleSheet, Alert } from 'react-native';
+import KeyboardSafeLayout from '../../src/components/KeyboardSafeLayout';
 import {
   Text,
   TextInput,
@@ -39,13 +40,13 @@ export default function ManagerScreen() {
       setIsAuthenticated(false);
       return;
     }
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth!, (user) => {
       setIsAuthenticated(!!user);
       if (user) {
         loadTransactions();
       } else {
         // Sign in anonymously if not authenticated
-        signInAnonymously(auth).catch((error) => {
+        signInAnonymously(auth!).catch((error) => {
           console.error('Error signing in anonymously:', error);
           Alert.alert('Error', 'Failed to initialize app. Please try again.');
         });
@@ -161,107 +162,110 @@ export default function ManagerScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.header}>
-          <Text variant="headlineMedium" style={styles.title}>
-            Expense Manager
-          </Text>
+      <KeyboardSafeLayout>
+        {/* Header */}
+        <View style={styles.scrollContent}>
+          <View style={styles.header}>
+            <Text variant="headlineMedium" style={styles.title}>
+              Expense Manager
+            </Text>
+          </View>
+
+          {/* Add Transaction Form */}
+          <Card style={styles.card}>
+            <Card.Content>
+              <Text variant="titleLarge" style={styles.sectionTitle}>
+                Add Expense
+              </Text>
+
+              <TextInput
+                label="Date"
+                mode="outlined"
+                value={date}
+                onChangeText={setDate}
+                style={styles.input}
+                placeholder="YYYY-MM-DD"
+              />
+
+              <TextInput
+                label="Amount (₹)"
+                mode="outlined"
+                keyboardType="numeric"
+                value={amount}
+                onChangeText={setAmount}
+                style={styles.input}
+              />
+
+              <Menu
+                visible={menuVisible}
+                onDismiss={() => setMenuVisible(false)}
+                anchor={
+                  <Button
+                    mode="outlined"
+                    onPress={() => setMenuVisible(true)}
+                    style={styles.categoryButton}
+                  >
+                    {selectedCategoryName}
+                  </Button>
+                }
+              >
+                {categories.map((category) => (
+                  <Menu.Item
+                    key={category.id}
+                    onPress={() => {
+                      setSelectedCategory(category.id);
+                      setMenuVisible(false);
+                    }}
+                    title={category.name}
+                  />
+                ))}
+              </Menu>
+
+              <Button
+                mode="contained"
+                onPress={handleAddTransaction}
+                style={styles.addButton}
+                loading={loading}
+                disabled={loading}
+              >
+                Add Transaction
+              </Button>
+            </Card.Content>
+          </Card>
+
+          {/* Transactions List */}
+          <Card style={styles.card}>
+            <Card.Content>
+              <Text variant="titleLarge" style={styles.sectionTitle}>
+                Recent Transactions
+              </Text>
+
+              {transactions.length === 0 ? (
+                <Text style={styles.emptyText}>No transactions yet</Text>
+              ) : (
+                transactions.map((transaction) => (
+                  <List.Item
+                    key={transaction.id}
+                    title={formatCurrency(transaction.amount)}
+                    description={`${transaction.category} • ${formatDate(transaction.date)}`}
+                    right={(props) => (
+                      <Button
+                        {...props}
+                        mode="text"
+                        onPress={() => handleDeleteTransaction(transaction.id)}
+                        textColor="#b00020"
+                      >
+                        Delete
+                      </Button>
+                    )}
+                    style={styles.listItem}
+                  />
+                ))
+              )}
+            </Card.Content>
+          </Card>
         </View>
-
-        {/* Add Transaction Form */}
-        <Card style={styles.card}>
-          <Card.Content>
-            <Text variant="titleLarge" style={styles.sectionTitle}>
-              Add Expense
-            </Text>
-
-            <TextInput
-              label="Date"
-              mode="outlined"
-              value={date}
-              onChangeText={setDate}
-              style={styles.input}
-              placeholder="YYYY-MM-DD"
-            />
-
-            <TextInput
-              label="Amount (₹)"
-              mode="outlined"
-              keyboardType="numeric"
-              value={amount}
-              onChangeText={setAmount}
-              style={styles.input}
-            />
-
-            <Menu
-              visible={menuVisible}
-              onDismiss={() => setMenuVisible(false)}
-              anchor={
-                <Button
-                  mode="outlined"
-                  onPress={() => setMenuVisible(true)}
-                  style={styles.categoryButton}
-                >
-                  {selectedCategoryName}
-                </Button>
-              }
-            >
-              {categories.map((category) => (
-                <Menu.Item
-                  key={category.id}
-                  onPress={() => {
-                    setSelectedCategory(category.id);
-                    setMenuVisible(false);
-                  }}
-                  title={category.name}
-                />
-              ))}
-            </Menu>
-
-            <Button
-              mode="contained"
-              onPress={handleAddTransaction}
-              style={styles.addButton}
-              loading={loading}
-              disabled={loading}
-            >
-              Add Transaction
-            </Button>
-          </Card.Content>
-        </Card>
-
-        {/* Transactions List */}
-        <Card style={styles.card}>
-          <Card.Content>
-            <Text variant="titleLarge" style={styles.sectionTitle}>
-              Recent Transactions
-            </Text>
-
-            {transactions.length === 0 ? (
-              <Text style={styles.emptyText}>No transactions yet</Text>
-            ) : (
-              transactions.map((transaction) => (
-                <List.Item
-                  key={transaction.id}
-                  title={formatCurrency(transaction.amount)}
-                  description={`${transaction.category} • ${formatDate(transaction.date)}`}
-                  right={(props) => (
-                    <Button
-                      {...props}
-                      mode="text"
-                      onPress={() => handleDeleteTransaction(transaction.id)}
-                      textColor="#b00020"
-                    >
-                      Delete
-                    </Button>
-                  )}
-                  style={styles.listItem}
-                />
-              ))
-            )}
-          </Card.Content>
-        </Card>
-      </ScrollView>
+      </KeyboardSafeLayout>
     </SafeAreaView>
   );
 }

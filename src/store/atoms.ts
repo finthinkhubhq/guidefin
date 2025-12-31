@@ -41,6 +41,7 @@ export interface UserSettings {
   name: string;
   currentAge: number;
   retirementAge: number;
+  lifeExpectancy: number; // added
   inflation: number; // as percentage (e.g., 5 for 5%)
 }
 
@@ -55,6 +56,7 @@ export const useSettingsStore = create<UserSettingsState>((set) => ({
     name: '',
     currentAge: 30,
     retirementAge: 60,
+    lifeExpectancy: 90,
     inflation: 6,
   },
   setSettings: (settings) => set({ settings }),

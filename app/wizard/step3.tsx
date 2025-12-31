@@ -7,21 +7,21 @@ import { useSettingsStore } from '../../src/store/atoms';
 
 const { width } = Dimensions.get('window');
 
-export default function WizardStep2() {
+export default function WizardStep3() {
     const router = useRouter();
     const { settings, setSettings } = useSettingsStore();
-    const [retireAge, setRetireAge] = useState(settings.retirementAge || 60);
+    const [lifeExpectancy, setLifeExpectancy] = useState(settings.lifeExpectancy || 90);
 
     const handleNext = () => {
         setSettings({
             ...settings,
-            retirementAge: retireAge
+            lifeExpectancy: lifeExpectancy
         });
-        router.push('/wizard/step3');
+        router.push('/wizard/step4');
     };
 
-    const increment = () => setRetireAge(prev => Math.min(prev + 1, 75));
-    const decrement = () => setRetireAge(prev => Math.max(prev - 1, 40));
+    const increment = () => setLifeExpectancy(prev => Math.min(prev + 1, 100));
+    const decrement = () => setLifeExpectancy(prev => Math.max(prev - 1, 75));
 
     return (
         <SafeAreaView style={styles.container}>
@@ -29,22 +29,22 @@ export default function WizardStep2() {
 
                 {/* Progress */}
                 <View style={styles.progressContainer}>
-                    <Text style={styles.stepLabel}>Step 2 of 5</Text>
-                    <ProgressBar progress={0.4} color="#1976D2" style={styles.progressBar} />
+                    <Text style={styles.stepLabel}>Step 3 of 5</Text>
+                    <ProgressBar progress={0.6} color="#1976D2" style={styles.progressBar} />
                 </View>
 
                 {/* Question */}
-                <Text style={styles.question}>When do you plan to retire?</Text>
-                <Text style={styles.helper}>Most people target 60, but it's up to you.</Text>
+                <Text style={styles.question}>How long should your money last?</Text>
+                <Text style={styles.helper}>We recommend planning for a longer life (e.g. 90) to be safe.</Text>
 
-                {/* Input: Button Stepper (No Native Slider) */}
+                {/* Input: Button Stepper (No Slider) */}
                 <View style={styles.stepperContainer}>
                     <TouchableOpacity onPress={decrement} style={styles.stepBtn}>
                         <IconButton icon="minus" iconColor="#1976D2" size={32} />
                     </TouchableOpacity>
 
                     <View style={styles.valueBox}>
-                        <Text style={styles.valueDisplay}>{retireAge}</Text>
+                        <Text style={styles.valueDisplay}>{lifeExpectancy}</Text>
                         <Text style={styles.valueLabel}>YEARS OLD</Text>
                     </View>
 

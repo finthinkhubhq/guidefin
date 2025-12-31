@@ -1,33 +1,30 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import { View, StyleSheet, Dimensions } from 'react-native';
 import { Text, TextInput, Button, ProgressBar } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { useSettingsStore } from '../../src/store/atoms';
+import { useExpensesStore } from '../../src/store/atoms';
 import KeyboardSafeLayout from '../../src/components/KeyboardSafeLayout';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const { width } = Dimensions.get('window');
 
-export default function WizardStep1() {
+export default function WizardStep4() {
     const router = useRouter();
-    const { settings, setSettings } = useSettingsStore();
-
-    const [name, setName] = useState(settings.name || '');
-    const [age, setAge] = useState(settings.currentAge ? settings.currentAge.toString() : '');
+    const { setExpenses } = useExpensesStore();
+    const [amount, setAmount] = useState('');
 
     const handleNext = () => {
-        if (name && age) {
-            setSettings({
-                ...settings,
-                name,
-                currentAge: parseInt(age)
-            });
-            router.push('/wizard/step2');
+        const val = parseFloat(amount);
+        if (!isNaN(val) && val > 0) {
+            // Simplified: Overwrite with single expense entry
+            setExpenses([
+                { id: '1', name: 'General Expenses', monthly: val, annual: val * 12 }
+            ]);
+            router.push('/wizard/step5');
         }
     };
 
-    const isValid = name.length > 0 && age.length > 0 && !isNaN(Number(age));
+    const isValid = amount.length > 0 && !isNaN(Number(amount));
 
     return (
         <SafeAreaView style={styles.container}>
@@ -36,40 +33,26 @@ export default function WizardStep1() {
 
                     {/* Progress */}
                     <View style={styles.progressContainer}>
-                        <Text style={styles.stepLabel}>Step 1 of 5</Text>
-                        <ProgressBar progress={0.2} color="#1976D2" style={styles.progressBar} />
+                        <Text style={styles.stepLabel}>Step 4 of 5</Text>
+                        <ProgressBar progress={0.8} color="#1976D2" style={styles.progressBar} />
                     </View>
 
                     {/* Question */}
-                    <Text style={styles.question}>Let's get to know you.</Text>
-                    <Text style={styles.helper}>We need these details to build your timeline.</Text>
+                    <Text style={styles.question}>What is your total monthly spend?</Text>
+                    <Text style={styles.helper}>Include rent, bills, food, and lifestyle costs.</Text>
 
-                    {/* Inputs */}
+                    {/* Input */}
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>What should we call you?</Text>
                         <TextInput
-                            value={name}
-                            onChangeText={setName}
-                            placeholder="Your Name"
-                            mode="outlined"
-                            style={styles.input}
-                            outlineStyle={styles.outline}
-                            placeholderTextColor="#B0BEC5"
-                            theme={{ colors: { primary: '#1976D2', background: '#FFF' } }}
-                        />
-                    </View>
-
-                    <View style={styles.inputGroup}>
-                        <Text style={styles.label}>How young are you today?</Text>
-                        <TextInput
-                            value={age}
-                            onChangeText={setAge}
-                            placeholder="Current Age (e.g. 30)"
+                            value={amount}
+                            onChangeText={setAmount}
+                            placeholder="Amount (₹)"
                             keyboardType="numeric"
                             mode="outlined"
                             style={styles.input}
                             outlineStyle={styles.outline}
                             placeholderTextColor="#B0BEC5"
+                            left={<TextInput.Affix text="₹" textStyle={{ fontWeight: '700', color: '#37474F' }} />}
                             theme={{ colors: { primary: '#1976D2', background: '#FFF' } }}
                         />
                     </View>
@@ -85,7 +68,7 @@ export default function WizardStep1() {
                         contentStyle={styles.btnContent}
                         labelStyle={[styles.btnLabel, !isValid && { color: '#B0BEC5' }]}
                     >
-                        Next Area
+                        Next Step
                     </Button>
 
                 </View>
@@ -106,9 +89,8 @@ const styles = StyleSheet.create({
     helper: { fontSize: 16, color: '#546E7A', lineHeight: 24, marginBottom: 40 },
 
     inputGroup: { marginBottom: 24 },
-    label: { fontSize: 14, fontWeight: '700', color: '#37474F', marginBottom: 8 },
-    input: { backgroundColor: '#FFF', fontSize: 16 },
-    outline: { borderRadius: 12, borderColor: '#CFD8DC' },
+    input: { backgroundColor: '#FFF', fontSize: 24, fontWeight: '700', height: 64 },
+    outline: { borderRadius: 16, borderColor: '#CFD8DC' },
 
     nextButton: { borderRadius: 16, backgroundColor: '#1976D2', marginTop: 20 },
     btnContent: { height: 56 },

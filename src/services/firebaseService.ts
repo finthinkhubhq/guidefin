@@ -27,6 +27,14 @@ const getUserId = () => {
   return user.uid;
 };
 
+// Get database instance
+const getDb = () => {
+  if (!db) {
+    throw new Error('Firestore not initialized');
+  }
+  return db;
+};
+
 // Transaction Services
 export const transactionService = {
   // Add a new transaction
@@ -38,7 +46,7 @@ export const transactionService = {
         createdAt: Date.now(),
       };
       const docRef = await addDoc(
-        collection(db, 'users', userId, 'transactions'),
+        collection(getDb(), 'users', userId, 'transactions'),
         transactionData
       );
       return docRef.id;
@@ -53,7 +61,7 @@ export const transactionService = {
     try {
       const userId = getUserId();
       const q = query(
-        collection(db, 'users', userId, 'transactions'),
+        collection(getDb(), 'users', userId, 'transactions'),
         orderBy('createdAt', 'desc')
       );
       const querySnapshot = await getDocs(q);
@@ -71,7 +79,7 @@ export const transactionService = {
   async deleteTransaction(transactionId: string): Promise<void> {
     try {
       const userId = getUserId();
-      await deleteDoc(doc(db, 'users', userId, 'transactions', transactionId));
+      await deleteDoc(doc(getDb(), 'users', userId, 'transactions', transactionId));
     } catch (error) {
       console.error('Error deleting transaction:', error);
       throw error;
@@ -85,9 +93,9 @@ export const categoryService = {
   async getCategories(): Promise<Category[]> {
     try {
       const userId = getUserId();
-      const docRef = doc(db, 'users', userId, 'settings', 'categories');
+      const docRef = doc(getDb(), 'users', userId, 'settings', 'categories');
       const docSnap = await getDoc(docRef);
-      
+
       if (docSnap.exists()) {
         return docSnap.data().categories as Category[];
       }
@@ -103,7 +111,7 @@ export const categoryService = {
     try {
       const userId = getUserId();
       await setDoc(
-        doc(db, 'users', userId, 'settings', 'categories'),
+        doc(getDb(), 'users', userId, 'settings', 'categories'),
         { categories },
         { merge: true }
       );
