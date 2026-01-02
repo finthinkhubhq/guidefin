@@ -5,16 +5,22 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useSettingsStore } from '../../src/store/atoms';
 
+
 const { width } = Dimensions.get('window');
 
-const InflationOption = ({ value, label, selected, onSelect }: any) => (
+const InflationOption = ({ value, description, tag, selected, onSelect }: any) => (
     <TouchableOpacity
         onPress={onSelect}
-        activeOpacity={0.8}
+        activeOpacity={0.9}
         style={[styles.option, selected && styles.optionSelected]}
     >
-        <Text style={[styles.optionValue, selected && styles.optionValueSelected]}>{value}%</Text>
-        <Text style={[styles.optionLabel, selected && styles.optionLabelSelected]}>{label}</Text>
+        <View style={styles.optionContent}>
+            <View>
+                <Text style={[styles.optionValue, selected && styles.optionValueSelected]}>{value}%</Text>
+                <Text style={[styles.optionTag, selected && styles.optionTagSelected]}>{tag}</Text>
+            </View>
+            <Text style={[styles.optionDesc, selected && styles.optionDescSelected]}>{description}</Text>
+        </View>
     </TouchableOpacity>
 );
 
@@ -28,7 +34,7 @@ export default function WizardStep5() {
             ...settings,
             inflation: inflation
         });
-        router.push('/wizard/summary');
+        router.push('/calculator/baseline');
     };
 
     return (
@@ -37,35 +43,43 @@ export default function WizardStep5() {
 
                 {/* Progress */}
                 <View style={styles.progressContainer}>
-                    <Text style={styles.stepLabel}>Step 5 of 5</Text>
+                    <Text style={styles.stepLabel}>Step 4 of 4</Text>
                     <ProgressBar progress={1.0} color="#1976D2" style={styles.progressBar} />
                 </View>
 
-                {/* Question */}
-                <Text style={styles.question}>One last thing.</Text>
-                <Text style={styles.helper}>How much do you think costs will rise each year (Inflation)?</Text>
+                {/* Header */}
+                <View style={styles.header}>
+                    <Text style={styles.title}>How fast will your expenses grow?</Text>
+                    <Text style={styles.subtitle}>This directly affects how much money you’ll need in retirement.</Text>
+                    <Text style={styles.helperLine}>Most people underestimate inflation. Choosing a higher value makes your plan safer.</Text>
+                </View>
 
-                {/* Input: Chips */}
+                {/* Vertical Option Cards */}
                 <View style={styles.optionsContainer}>
                     <InflationOption
                         value={6}
-                        label="Historical"
+                        description="Based on long-term inflation averages"
+                        tag="Historical"
                         selected={inflation === 6}
                         onSelect={() => setInflation(6)}
                     />
                     <InflationOption
                         value={7}
-                        label="Recommended"
+                        description="Safer for long-term retirement planning"
+                        tag="Recommended"
                         selected={inflation === 7}
                         onSelect={() => setInflation(7)}
                     />
                     <InflationOption
                         value={8}
-                        label="Conservative"
+                        description="Protects against worst-case cost increases"
+                        tag="Conservative"
                         selected={inflation === 8}
                         onSelect={() => setInflation(8)}
                     />
                 </View>
+
+                <Text style={styles.reassurance}>You can change this assumption later if your situation changes.</Text>
 
                 <View style={{ flex: 1 }} />
 
@@ -77,7 +91,7 @@ export default function WizardStep5() {
                     contentStyle={styles.btnContent}
                     labelStyle={styles.btnLabel}
                 >
-                    Calculate My Plan
+                    See My Retirement Plan
                 </Button>
 
             </View>
@@ -89,24 +103,49 @@ const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#FFFFFF' },
     content: { flex: 1, padding: 24 },
 
-    progressContainer: { marginBottom: 32 },
+    progressContainer: { marginBottom: 24 },
     stepLabel: { fontSize: 12, fontWeight: '700', color: '#90A4AE', marginBottom: 8, textTransform: 'uppercase' },
     progressBar: { borderRadius: 4, height: 6, backgroundColor: '#F5F7FA' },
 
-    question: { fontSize: 28, fontWeight: '800', color: '#263238', marginBottom: 8, lineHeight: 36 },
-    helper: { fontSize: 16, color: '#546E7A', lineHeight: 24, marginBottom: 40 },
+    header: { marginBottom: 24 },
+    title: { fontSize: 28, fontWeight: '800', color: '#263238', marginBottom: 8, lineHeight: 34 },
+    subtitle: { fontSize: 15, color: '#546E7A', lineHeight: 22, marginBottom: 8 },
+    helperLine: { fontSize: 13, color: '#90A4AE', lineHeight: 18, fontStyle: 'italic' },
 
-    optionsContainer: { flexDirection: 'row', justifyContent: 'space-between', gap: 12 },
-    option: { flex: 1, alignItems: 'center', paddingVertical: 20, borderRadius: 16, backgroundColor: '#F5F7FA', borderWidth: 2, borderColor: '#F5F7FA' },
-    optionSelected: { backgroundColor: '#E3F2FD', borderColor: '#1976D2' },
+    optionsContainer: { flexDirection: 'column', gap: 12 },
+    option: {
+        padding: 20,
+        borderRadius: 16,
+        backgroundColor: '#FFFFFF',
+        borderWidth: 1,
+        borderColor: '#ECEFF1',
+        shadowColor: '#000',
+        shadowOpacity: 0.03,
+        shadowOffset: { width: 0, height: 2 },
+        shadowRadius: 8,
+        elevation: 2,
+    },
+    optionSelected: {
+        backgroundColor: '#F3F8FD',
+        borderColor: '#1976D2',
+        borderWidth: 2,
+        transform: [{ scale: 1.02 }], // Subtle scale
+        shadowOpacity: 0.1,
+    },
+    optionContent: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
 
-    optionValue: { fontSize: 24, fontWeight: '800', color: '#546E7A', marginBottom: 4 },
+    optionValue: { fontSize: 24, fontWeight: '800', color: '#546E7A' },
     optionValueSelected: { color: '#1976D2' },
 
-    optionLabel: { fontSize: 10, fontWeight: '700', color: '#90A4AE', textTransform: 'uppercase' },
-    optionLabelSelected: { color: '#1976D2' },
+    optionDesc: { flex: 1, fontSize: 14, color: '#78909C', marginLeft: 16, lineHeight: 20 },
+    optionDescSelected: { color: '#455A64', fontWeight: '500' },
 
-    nextButton: { borderRadius: 16, backgroundColor: '#1976D2', marginTop: 20 },
+    optionTag: { fontSize: 10, fontWeight: '700', color: '#B0BEC5', textTransform: 'uppercase', marginTop: 4 },
+    optionTagSelected: { color: '#1976D2' },
+
+    reassurance: { textAlign: 'center', marginTop: 24, fontSize: 12, color: '#B0BEC5' },
+
+    nextButton: { borderRadius: 16, backgroundColor: '#1976D2', marginBottom: 10 },
     btnContent: { height: 56 },
     btnLabel: { fontSize: 16, fontWeight: '700', color: '#FFF' },
 });

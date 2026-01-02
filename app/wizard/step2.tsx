@@ -49,8 +49,8 @@ export default function WizardStep2() {
 
                     {/* Progress */}
                     <View style={styles.progressContainer}>
-                        <Text style={styles.stepLabel}>Step 2 of 5</Text>
-                        <ProgressBar progress={0.4} color="#1976D2" style={styles.progressBar} />
+                        <Text style={styles.stepLabel}>Step 1 of 4</Text>
+                        <ProgressBar progress={0.25} color="#1976D2" style={styles.progressBar} />
                     </View>
 
                     {/* Question */}

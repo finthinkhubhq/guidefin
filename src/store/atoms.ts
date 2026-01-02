@@ -26,13 +26,15 @@ const defaultCategories: ExpenseCategory[] = [
 export interface ExpensesState {
   expenses: ExpenseCategory[];
   setExpenses: (expenses: ExpenseCategory[] | ((prev: ExpenseCategory[]) => ExpenseCategory[])) => void;
+  resetExpenses: () => void;
 }
 
 export const useExpensesStore = create<ExpensesState>((set) => ({
   expenses: defaultCategories,
   setExpenses: (expensesOrUpdater) => set((state) => ({
     expenses: typeof expensesOrUpdater === 'function' ? expensesOrUpdater(state.expenses) : expensesOrUpdater
-  }))
+  })),
+  resetExpenses: () => set({ expenses: defaultCategories }),
 }));
 
 
@@ -54,7 +56,7 @@ export interface UserSettingsState {
 export const useSettingsStore = create<UserSettingsState>((set) => ({
   settings: {
     name: '',
-    currentAge: 30,
+    currentAge: 0,
     retirementAge: 60,
     lifeExpectancy: 90,
     inflation: 6,

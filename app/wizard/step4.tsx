@@ -33,8 +33,8 @@ export default function WizardStep4() {
 
                     {/* Progress */}
                     <View style={styles.progressContainer}>
-                        <Text style={styles.stepLabel}>Step 4 of 5</Text>
-                        <ProgressBar progress={0.8} color="#1976D2" style={styles.progressBar} />
+                        <Text style={styles.stepLabel}>Step 3 of 4</Text>
+                        <ProgressBar progress={0.75} color="#1976D2" style={styles.progressBar} />
                     </View>
 
                     {/* Question */}

@@ -32,6 +32,8 @@ export interface FinancialOutput {
     corpus: {
         baseCorpus: number;
         bufferedCorpus: number;
+        simpleCorpus: number;
+        simpleWithdrawalRate: number;
         bufferPercent: number;
     };
     disclaimer: string;
@@ -79,6 +81,17 @@ export const calculateRetirementCorpus = (inputs: FinancialInputs): FinancialOut
     // 4) Safety Buffer Application
     const bufferedCorpus = baseCorpus * (1 + safetyBufferPercent);
 
+    // 5) Simple Rule (Dynamic Multiplier)
+    // < 30 years: Rule of 25
+    // 30-40 years: Rule of 30
+    // > 40 years: Rule of 33
+    let multiplier = 25;
+    if (retirementDuration > 40) multiplier = 33;
+    else if (retirementDuration > 30) multiplier = 30;
+
+    const simpleCorpus = expenseAtRetirementAnnual * multiplier;
+    const simpleWithdrawalRate = (1 / multiplier);
+
     // OUTPUT OBJECT
     return {
         inputs: { ...inputs },
@@ -95,6 +108,8 @@ export const calculateRetirementCorpus = (inputs: FinancialInputs): FinancialOut
         corpus: {
             baseCorpus,
             bufferedCorpus,
+            simpleCorpus,
+            simpleWithdrawalRate,
             bufferPercent: safetyBufferPercent,
         },
         disclaimer: "Results are based on assumptions and historical averages. Actual outcomes may vary.",

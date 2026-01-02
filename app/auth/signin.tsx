@@ -15,7 +15,7 @@ export default function SignInScreen() {
     const router = useRouter();
     const { settings, setSettings } = useSettingsStore();
 
-    const [name, setName] = useState('');
+    const [name, setName] = useState(settings.name || '');
     const [inputMode, setInputMode] = useState<InputMode>('DOB');
 
     // DOB State
@@ -24,9 +24,23 @@ export default function SignInScreen() {
     const [showDatePicker, setShowDatePicker] = useState(false);
 
     // Age State
-    const [age, setAge] = useState('');
+    const [age, setAge] = useState(settings.currentAge ? settings.currentAge.toString() : '');
 
     const [isValid, setIsValid] = useState(false);
+
+    // Sync state with settings store (Handles Restart/Home navigation)
+    useEffect(() => {
+        setName(settings.name || '');
+        if (settings.currentAge) {
+            setAge(settings.currentAge.toString());
+            setInputMode('AGE'); // Default to AGE if age exists
+        } else {
+            setAge('');
+            setDob(null);
+            setDobText('');
+            setInputMode('DOB'); // Default to DOB for fresh start
+        }
+    }, [settings]);
 
     // Auto-calculate Age if DOB is selected
     useEffect(() => {
@@ -39,6 +53,8 @@ export default function SignInScreen() {
             }
         }
     }, [dob, dobText, inputMode]);
+
+
 
     // Validation Effect
     useEffect(() => {
@@ -75,7 +91,13 @@ export default function SignInScreen() {
             currentAge: finalAge,
         });
 
-        router.push('/wizard/step1');
+
+
+
+
+
+        // Use replace to ensure we don't stack signin -> step2 -> ... repeatedly
+        router.replace('/wizard/step2');
     };
 
     const handleNameChange = (text: string) => {
