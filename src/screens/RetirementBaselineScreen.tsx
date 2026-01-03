@@ -121,7 +121,7 @@ export default function RetirementBaselineScreen() {
                     <Text style={styles.heroLabel}>MINIMUM ESTIMATE</Text>
 
                     <View style={styles.swrBadge}>
-                        <Text style={styles.swrText}>Safe Withdrawal Rate: 4.0%</Text>
+                        <Text style={styles.swrText}>Safe Withdrawal Rate: {((baseline.annualExpenseAtRetirement / baseline.simpleCorpus) * 100).toFixed(1)}%</Text>
                     </View>
 
                     {/* Resilience Score Section */}

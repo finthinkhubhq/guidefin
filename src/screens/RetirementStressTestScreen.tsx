@@ -8,6 +8,8 @@ import WizardHeader from '../components/WizardHeader';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 
+import { generateRetirementReport } from '../services/pdfGenerator';
+
 export default function RetirementStressTestScreen() {
     const { stressTest, baseline, inputs, setStressTestResult, resetRetirementPlan } = useRetirementStore();
     const [isStressTestRunning, setIsStressTestRunning] = useState(false);
@@ -48,6 +50,17 @@ export default function RetirementStressTestScreen() {
         }, 1500);
     };
 
+    const handleDownloadReport = async () => {
+        setIsStressTestRunning(true);
+        try {
+            await generateRetirementReport(inputs!, baseline!, stressTest && stressTest.successRate ? stressTest : null, settings);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setIsStressTestRunning(false);
+        }
+    };
+
     const formatCurrencyCr = (val: number) => {
         const cr = val / 10000000;
         return `₹ ${cr.toFixed(2)} Cr`;
@@ -63,7 +76,15 @@ export default function RetirementStressTestScreen() {
 
     return (
         <SafeAreaView style={styles.safeArea}>
-            <WizardHeader currentStep="STRESS_TEST" />
+            <View style={styles.header}>
+                <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+                    <MaterialCommunityIcons name="arrow-left" size={24} color="#37474F" />
+                </TouchableOpacity>
+                <Text style={styles.headerTitle}>Stress Test Results</Text>
+                <TouchableOpacity onPress={handleDownloadReport} disabled={isStressTestRunning} style={{ opacity: isStressTestRunning ? 0.5 : 1 }}>
+                    <MaterialCommunityIcons name="file-download-outline" size={24} color="#1565C0" />
+                </TouchableOpacity>
+            </View>
 
             <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
 
@@ -171,6 +192,9 @@ const styles = StyleSheet.create({
     contentContainer: { padding: 20, paddingBottom: 40 },
 
     headerSection: { marginBottom: 24 },
+    header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingVertical: 12, backgroundColor: '#fff', borderBottomWidth: 1, borderBottomColor: '#ECEFF1' },
+    headerTitle: { fontSize: 16, fontWeight: '700', color: '#263238' },
+    backButton: { padding: 4 },
     title: { fontSize: 24, fontWeight: '800', color: '#263238', marginBottom: 8 },
     subtitle: { fontSize: 14, color: '#546E7A', lineHeight: 20 },
 
