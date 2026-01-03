@@ -81,9 +81,11 @@ export default function RetirementStressTestScreen() {
                     <MaterialCommunityIcons name="arrow-left" size={24} color="#37474F" />
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Stress Test Results</Text>
-                <TouchableOpacity onPress={handleDownloadReport} disabled={isStressTestRunning} style={{ opacity: isStressTestRunning ? 0.5 : 1 }}>
-                    <MaterialCommunityIcons name="file-download-outline" size={24} color="#1565C0" />
-                </TouchableOpacity>
+                {showResults && (
+                    <TouchableOpacity onPress={handleDownloadReport} disabled={isStressTestRunning} style={{ opacity: isStressTestRunning ? 0.5 : 1 }}>
+                        <MaterialCommunityIcons name="file-download-outline" size={24} color="#1565C0" />
+                    </TouchableOpacity>
+                )}
             </View>
 
             <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
