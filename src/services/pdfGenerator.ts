@@ -1,13 +1,13 @@
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
+
+const { StorageAccessFramework } = FileSystem as any;
 import * as IntentLauncher from 'expo-intent-launcher';
 import { Platform } from 'react-native';
 import { Asset } from 'expo-asset'; // Import Asset module
 import { RetirementInputs, BaselineResult, StressTestResult } from '../store/useRetirementStore';
 import { runStressTest } from './retirementCalculator';
-
-const { StorageAccessFramework } = FileSystem;
 
 export const generateRetirementReport = async (
     inputs: RetirementInputs,
@@ -57,7 +57,7 @@ export const generateRetirementReport = async (
         const logoAsset = Asset.fromModule(require('../assets/guidefin_logo_pdf.png'));
         await logoAsset.downloadAsync(); // Ensure it's downloaded/available
         // Read file contents as base64
-        const fileContent = await FileSystem.readAsStringAsync(logoAsset.localUri || logoAsset.uri, { encoding: FileSystem.EncodingType.Base64 });
+        const fileContent = await FileSystem.readAsStringAsync(logoAsset.localUri || logoAsset.uri, { encoding: 'base64' });
         logoBase64 = `data:image/png;base64,${fileContent}`;
     } catch (e) {
         console.warn("Error loading logo:", e);
@@ -242,7 +242,7 @@ export const generateRetirementReport = async (
             <div class="section-title">Why the Higher Corpus?</div>
             <div style="font-size: 11px; color: #4B5563; line-height: 1.6; background: #fff; padding: 12px; border-radius: 8px; border: 1px solid #E5E7EB;">
                 <p style="margin-bottom: 8px;">
-                    <b>Market Reality:</b> Financial markets are volatile. A retirement plan based on average returns (the "Minimum" plan) fails in nearly ${100 - simpleResilienceScore.toFixed(0)}% of historical scenarios.
+                    <b>Market Reality:</b> Financial markets are volatile. A retirement plan based on average returns (the "Minimum" plan) fails in nearly ${100 - Number(simpleResilienceScore.toFixed(0))}% of historical scenarios.
                 </p>
                 <p>
                     <b>The GuideFin Advantage:</b> The recommended <b>${formatCr(baseline.baselineCorpus)}</b> corpus acts as a safety shield. It creates a buffer that ensures your income continues even if the market crashes right after you retire (Sequence of Returns Risk). This increases your plan's reliability to <b>${resilienceScore.toFixed(0)}%</b>.
@@ -268,59 +268,17 @@ export const generateRetirementReport = async (
         const fileName = `GuideFin_Retirement_Report_${safeName}_${dateStr}_${randomNum}.pdf`;
 
         if (Platform.OS === 'android') {
-            // Android: Save to Public Downloads/GuideFin via SAF
-            // CHECK: Ensure StorageAccessFramework is available (requires correct native build)
-            if (StorageAccessFramework) {
-                try {
-                    // 1. Ask user to pick the "Downloads" folder
-                    const permissions = await StorageAccessFramework.requestDirectoryPermissionsAsync();
-
-                    if (permissions.granted) {
-                        const rootUri = permissions.directoryUri;
-                        let finalDirUri = rootUri;
-
-                        try {
-                            // 2. Try to create 'GuideFin' folder
-                            finalDirUri = await StorageAccessFramework.makeDirectoryAsync(rootUri, 'GuideFin');
-                        } catch (e: any) {
-                            console.log("GuideFin folder might already exist or permission denied. Using root.");
-                            finalDirUri = rootUri;
-                        }
-
-                        // 3. Create File
-                        const pdfContent = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
-                        const createdFileUri = await StorageAccessFramework.createFileAsync(finalDirUri, fileName, 'application/pdf');
-                        await FileSystem.writeAsStringAsync(createdFileUri, pdfContent, { encoding: FileSystem.EncodingType.Base64 });
-
-                        console.log("PDF Saved to:", createdFileUri);
-
-                        // 4. Open File
-                        if (IntentLauncher && IntentLauncher.startActivityAsync) {
-                            await IntentLauncher.startActivityAsync('android.intent.action.VIEW', {
-                                data: createdFileUri,
-                                flags: 1,
-                                type: 'application/pdf',
-                            });
-                        } else {
-                            // If IntentLauncher is missing, fallback to share
-                            await Sharing.shareAsync(createdFileUri, { UTI: '.pdf', mimeType: 'application/pdf' });
-                        }
-
-                        return; // Success!
-                    }
-                } catch (safError) {
-                    console.error("SAF Error:", safError);
-                    // Fall through to fallback
-                }
-            } else {
-                console.warn("StorageAccessFramework is not available. Native modules might be outdated.");
-            }
-
-            // Fallback: Share the original cached file if SAF failed or is missing
-            await Sharing.shareAsync(uri, { UTI: '.pdf', mimeType: 'application/pdf' });
+            // Android: Use Sharing.shareAsync which enables "Open with", "Share to", "Save to" etc.
+            // This is cleaner and less error-prone than the manual StorageAccessFramework flow
+            // and allows the user to decide how they want to handle the file (view it or share it).
+            await Sharing.shareAsync(uri, {
+                UTI: '.pdf',
+                mimeType: 'application/pdf',
+                dialogTitle: `Share or Open Report`
+            });
         } else {
             // iOS: Rename and Share
-            const newUri = FileSystem.documentDirectory + fileName;
+            const newUri = (FileSystem as any).documentDirectory + fileName;
             await FileSystem.moveAsync({ from: uri, to: newUri });
             await Sharing.shareAsync(newUri, { UTI: '.pdf', mimeType: 'application/pdf' });
         }

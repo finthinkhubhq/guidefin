@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Guidefin",
+    "name": "GuideFin",
     "slug": "guidefin",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -27,7 +27,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.fincal.app",
+      "package": "com.guidefin.app",
       "softwareKeyboardLayoutMode": "resize"
     },
     "web": {

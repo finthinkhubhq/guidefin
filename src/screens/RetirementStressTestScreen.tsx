@@ -81,11 +81,7 @@ export default function RetirementStressTestScreen() {
                     <MaterialCommunityIcons name="arrow-left" size={24} color="#37474F" />
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Stress Test Results</Text>
-                {showResults && (
-                    <TouchableOpacity onPress={handleDownloadReport} disabled={isStressTestRunning} style={{ opacity: isStressTestRunning ? 0.5 : 1 }}>
-                        <MaterialCommunityIcons name="file-download-outline" size={24} color="#1565C0" />
-                    </TouchableOpacity>
-                )}
+                {/* Download removed from header, moved to footer */}
             </View>
 
             <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
@@ -176,9 +172,14 @@ export default function RetirementStressTestScreen() {
                             </View>
                         )}
 
-                        <TouchableOpacity activeOpacity={0.8} onPress={handleHome} style={styles.outlineButton}>
+                        <TouchableOpacity activeOpacity={0.8} onPress={handleDownloadReport} style={styles.outlineButton}>
+                            <MaterialCommunityIcons name="file-download-outline" size={20} color="#1565C0" />
+                            <Text style={styles.outlineButtonText}>Download Report</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity activeOpacity={0.8} onPress={handleHome} style={[styles.outlineButton, { marginTop: 12, borderColor: 'transparent' }]}>
                             <MaterialCommunityIcons name="home-outline" size={20} color="#546E7A" />
-                            <Text style={styles.outlineButtonText}>Home</Text>
+                            <Text style={[styles.outlineButtonText, { color: '#546E7A' }]}>Back to Home</Text>
                         </TouchableOpacity>
                     </View>
                 )}
@@ -238,6 +239,6 @@ const styles = StyleSheet.create({
     scoreLabel: { fontSize: 11, color: '#90A4AE', marginTop: 4, textTransform: 'uppercase' },
     scoreMessage: { fontSize: 14, color: '#546E7A', textAlign: 'center', fontWeight: '500' },
 
-    outlineButton: { flexDirection: 'row', backgroundColor: 'transparent', paddingVertical: 14, borderRadius: 12, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: '#CFD8DC' },
-    outlineButtonText: { fontSize: 16, fontWeight: '600', color: '#546E7A', marginLeft: 8 },
+    outlineButton: { flexDirection: 'row', backgroundColor: '#F5F9FF', paddingVertical: 14, borderRadius: 12, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: '#1976D2' },
+    outlineButtonText: { fontSize: 16, fontWeight: '700', color: '#1976D2', marginLeft: 8 },
 });

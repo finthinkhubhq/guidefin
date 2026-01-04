@@ -158,19 +158,21 @@ export default function RetirementBaselineScreen() {
                     </View>
                 </View>
 
-                <View style={styles.footer}>
-                    <TouchableOpacity activeOpacity={0.8} onPress={handleSeeDetailedPlan} style={styles.button}>
-                        <Text style={styles.buttonText}>See High Resilience Plan</Text>
-                        <MaterialCommunityIcons name="arrow-right" size={24} color="#fff" style={{ marginLeft: 8 }} />
-                    </TouchableOpacity>
-                    <Text style={styles.buttonSubtext}>Get &gt;90% Success Probability</Text>
-                    <Text style={styles.helperText}>
-                        Calculated using 3,000 market simulations
-                    </Text>
-                </View>
+
 
             </ScrollView>
-        </SafeAreaView>
+
+            <View style={styles.footer}>
+                <TouchableOpacity activeOpacity={0.8} onPress={handleSeeDetailedPlan} style={styles.button}>
+                    <Text style={styles.buttonText}>See High Resilience Plan</Text>
+                    <MaterialCommunityIcons name="arrow-right" size={24} color="#fff" style={{ marginLeft: 8 }} />
+                </TouchableOpacity>
+                <Text style={styles.buttonSubtext}>Get &gt;90% Success Probability</Text>
+                <Text style={styles.helperText}>
+                    Calculated using 3,000 market simulations
+                </Text>
+            </View>
+        </SafeAreaView >
     );
 }
 
@@ -179,11 +181,11 @@ const styles = StyleSheet.create({
     container: { flex: 1 },
     contentContainer: { padding: 20 },
 
-    headerSection: { marginBottom: 24 },
-    title: { fontSize: 22, fontWeight: '800', color: '#263238', marginBottom: 8 },
-    subtitle: { fontSize: 14, color: '#546E7A', lineHeight: 20 },
+    headerSection: { marginBottom: 12 },
+    title: { fontSize: 20, fontWeight: '800', color: '#263238', marginBottom: 4 },
+    subtitle: { fontSize: 13, color: '#546E7A', lineHeight: 18 },
 
-    heroCard: { backgroundColor: '#fff', borderRadius: 16, padding: 24, alignItems: 'center', marginBottom: 24, shadowColor: '#000', shadowOpacity: 0.05, shadowOffset: { width: 0, height: 4 }, shadowRadius: 12, elevation: 4 },
+    heroCard: { backgroundColor: '#fff', borderRadius: 16, padding: 20, alignItems: 'center', marginBottom: 16, shadowColor: '#000', shadowOpacity: 0.05, shadowOffset: { width: 0, height: 4 }, shadowRadius: 12, elevation: 4 },
     heroValue: { fontSize: 40, fontWeight: '800', color: '#1B5E20', marginBottom: 4 },
     heroLabel: { fontSize: 11, fontWeight: '700', color: '#90A4AE', letterSpacing: 1, textTransform: 'uppercase' },
 
@@ -204,13 +206,24 @@ const styles = StyleSheet.create({
     cardValue: { fontSize: 15, fontWeight: '600', color: '#546E7A' },
     cardValueHighlight: { fontSize: 16, fontWeight: '700', color: '#263238' },
 
-    footer: { marginTop: 8, alignItems: 'center' },
-    button: { flexDirection: 'row', backgroundColor: '#2196F3', paddingVertical: 16, paddingHorizontal: 32, borderRadius: 16, justifyContent: 'center', alignItems: 'center', shadowColor: '#2196F3', shadowOpacity: 0.3, shadowOffset: { width: 0, height: 4 }, shadowRadius: 8, elevation: 4, width: '100%' },
+    footer: {
+        padding: 16,
+        backgroundColor: '#FFFFFF',
+        borderTopWidth: 1,
+        borderTopColor: '#F0F0F0',
+        elevation: 16,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: -4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+        alignItems: 'center'
+    },
+    button: { flexDirection: 'row', backgroundColor: '#2196F3', paddingVertical: 14, paddingHorizontal: 32, borderRadius: 14, justifyContent: 'center', alignItems: 'center', shadowColor: '#2196F3', shadowOpacity: 0.3, shadowOffset: { width: 0, height: 4 }, shadowRadius: 8, elevation: 4, width: '100%' },
     buttonText: { fontSize: 16, fontWeight: '700', color: '#fff' },
     buttonSubtext: { fontSize: 11, color: '#1976D2', marginTop: 8, fontWeight: '600', textAlign: 'center' },
     helperText: { textAlign: 'center', marginTop: 4, fontSize: 12, color: '#90A4AE', lineHeight: 18 },
 
-    insightCard: { backgroundColor: '#fff', borderRadius: 12, padding: 16, marginBottom: 20, borderWidth: 1, borderColor: '#ECEFF1' },
+    insightCard: { backgroundColor: '#fff', borderRadius: 12, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: '#ECEFF1' },
     insightTitle: { fontSize: 11, fontWeight: '700', color: '#90A4AE', textTransform: 'uppercase', marginBottom: 12, letterSpacing: 0.5 },
     insightRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
     insightArrow: { paddingHorizontal: 8 },

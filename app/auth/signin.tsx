@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, StyleSheet, Platform, Dimensions, Image, TouchableOpacity, Pressable } from 'react-native';
 import KeyboardSafeLayout from '../../src/components/KeyboardSafeLayout';
 import { Text, TextInput, Button } from 'react-native-paper';
@@ -28,6 +28,9 @@ export default function SignInScreen() {
 
     const [isValid, setIsValid] = useState(false);
 
+    // Ref for Age Input
+    const ageInputRef = useRef<React.ElementRef<typeof TextInput>>(null);
+
     // Sync state with settings store (Handles Restart/Home navigation)
     useEffect(() => {
         setName(settings.name || '');
@@ -41,6 +44,16 @@ export default function SignInScreen() {
             setInputMode('DOB'); // Default to DOB for fresh start
         }
     }, [settings]);
+
+    // Auto-focus Age input when switching to AGE mode
+    useEffect(() => {
+        if (inputMode === 'AGE') {
+            // Small timeout to ensure component is rendered and layout is settled
+            setTimeout(() => {
+                ageInputRef.current?.focus();
+            }, 100);
+        }
+    }, [inputMode]);
 
     // Auto-calculate Age if DOB is selected
     useEffect(() => {
@@ -211,6 +224,7 @@ export default function SignInScreen() {
                             ) : (
                                 <View>
                                     <TextInput
+                                        ref={ageInputRef}
                                         mode="outlined"
                                         value={age}
                                         onChangeText={handleAgeChange}

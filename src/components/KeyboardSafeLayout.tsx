@@ -13,7 +13,7 @@ export default function KeyboardSafeLayout({ children }: KeyboardSafeLayoutProps
             contentContainerStyle={{ flexGrow: 1 }}
             enableOnAndroid={true}
             keyboardOpeningTime={0}
-            extraScrollHeight={Platform.OS === 'android' ? 120 : 80}
+            extraScrollHeight={Platform.OS === 'android' ? 20 : 80}
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
         >
