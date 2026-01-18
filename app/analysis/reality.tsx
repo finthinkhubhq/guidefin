@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { theme } from '../../src/theme';
 
 const { width } = Dimensions.get('window');
 
@@ -69,9 +70,6 @@ export default function RealityCheckScreen() {
         </SafeAreaView>
     );
 }
-
-// Theme Import
-import { theme } from '../../src/theme';
 
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: theme.colors.background.primary },
