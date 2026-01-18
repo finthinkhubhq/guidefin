@@ -7,6 +7,7 @@ import { useExpensesStore, useSettingsStore } from '../src/store/atoms';
 import { LinearGradient } from 'expo-linear-gradient';
 import { calculateRetirementCorpus } from '../src/utils/financialEngine';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { theme } from '../src/theme';
 
 const { width, height } = Dimensions.get('window');
 
@@ -22,7 +23,8 @@ export default function Dashboard() {
     const { expenses } = useExpensesStore();
     const { settings } = useSettingsStore();
 
-    const currentMonthly = expenses.reduce((sum, item) => sum + item.monthly, 0);
+    // Prioritize settings.monthlyExpenses (from Calculator) if available, otherwise sum categories
+    const currentMonthly = settings.monthlyExpenses || expenses.reduce((sum, item) => sum + item.monthly, 0);
     const result = calculateRetirementCorpus({
         currentAge: settings.currentAge,
         retirementAge: settings.retirementAge,
@@ -151,7 +153,7 @@ export default function Dashboard() {
 
                 {/* CTA */}
                 <View style={styles.ctaWrapper}>
-                    <TouchableOpacity activeOpacity={0.9} onPress={() => router.push('/calculator/baseline')}>
+                    <TouchableOpacity activeOpacity={0.9} onPress={() => router.push('/analysis')}>
                         <LinearGradient
                             colors={['#2196F3', '#1976D2']}
                             style={styles.ctaButton}
@@ -171,60 +173,60 @@ export default function Dashboard() {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#F9FAFB' },
+    container: { flex: 1, backgroundColor: theme.colors.background.primary },
     wrapper: { flex: 1, padding: 20 },
 
     // Header
     header: { marginBottom: 16 },
-    greeting: { fontSize: 13, fontWeight: '600', color: '#90A4AE' },
-    pageTitle: { fontSize: 24, fontWeight: '800', color: '#263238', letterSpacing: -0.5 },
+    greeting: { fontSize: 13, fontWeight: '600', color: theme.colors.text.accent },
+    pageTitle: { fontSize: 24, fontWeight: '800', color: theme.colors.text.primary, letterSpacing: -0.5 },
 
     // Card 1
-    card: { backgroundColor: '#FFF', borderRadius: 16, marginBottom: 0, elevation: 1, borderWidth: 1, borderColor: '#ECEFF1' },
+    card: { backgroundColor: theme.colors.background.surface, borderRadius: 16, marginBottom: 0, elevation: 2 }, // Removed border
     cardHeader: { paddingHorizontal: 20, paddingTop: 16, marginBottom: 12 },
-    cardTitle: { fontSize: 11, fontWeight: '700', color: '#90A4AE', textTransform: 'uppercase', letterSpacing: 0.5 },
+    cardTitle: { fontSize: 11, fontWeight: '700', color: theme.colors.text.muted, textTransform: 'uppercase', letterSpacing: 0.5 },
 
     lifestyleContainer: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 24, paddingBottom: 24 },
     lsNode: { alignItems: 'flex-start' },
     lsNodeRight: { alignItems: 'flex-end' },
-    lsLabel: { fontSize: 13, color: '#546E7A', fontWeight: '500', marginBottom: 6 },
-    lsValue: { fontSize: 20, fontWeight: '700', color: '#37474F', marginTop: 8 },
+    lsLabel: { fontSize: 13, color: theme.colors.text.secondary, fontWeight: '500', marginBottom: 6 },
+    lsValue: { fontSize: 20, fontWeight: '700', color: theme.colors.text.primary, marginTop: 8 },
     lsConnector: { alignItems: 'center', flex: 1 },
-    lsGrowthText: { fontSize: 9, color: '#CFD8DC', marginTop: -2 },
+    lsGrowthText: { fontSize: 9, color: theme.colors.text.muted, marginTop: -2 },
 
     badge: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8 },
     badgeText: { fontSize: 10, fontWeight: '700' },
 
-    cardFooter: { backgroundColor: '#F9FAFB', paddingVertical: 10, paddingHorizontal: 16, borderBottomLeftRadius: 16, borderBottomRightRadius: 16, borderTopWidth: 1, borderTopColor: '#F5F5F5' },
-    footerText: { fontSize: 11, color: '#78909C', textAlign: 'center' },
+    cardFooter: { backgroundColor: '#F5F7FA', paddingVertical: 10, paddingHorizontal: 16, borderBottomLeftRadius: 16, borderBottomRightRadius: 16 }, // Lighter footer
+    footerText: { fontSize: 11, color: theme.colors.text.muted, textAlign: 'center' },
 
     // Card 2: Hero
-    heroCard: { backgroundColor: '#FFF', borderRadius: 20, elevation: 4, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 12, borderWidth: 1, borderColor: '#ECEFF1' },
+    heroCard: { backgroundColor: theme.colors.background.secondary, borderRadius: 20, elevation: 4, shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 12 }, // Removed border
     heroContent: { padding: 24, alignItems: 'center' },
-    heroLabel: { fontSize: 11, fontWeight: '700', color: '#B0BEC5', letterSpacing: 1, marginBottom: 12, textAlign: 'center' },
-    heroValue: { fontSize: 48, fontWeight: '800', color: '#263238', letterSpacing: -1, marginBottom: 16 },
+    heroLabel: { fontSize: 11, fontWeight: '700', color: theme.colors.text.secondary, letterSpacing: 1, marginBottom: 12, textAlign: 'center' },
+    heroValue: { fontSize: 48, fontWeight: '800', color: theme.colors.text.primary, letterSpacing: -1, marginBottom: 16 },
 
     pillContainer: { flexDirection: 'row', marginBottom: 20 },
-    pill: { backgroundColor: '#E8F5E9', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12 },
-    pillText: { fontSize: 11, color: '#2E7D32', fontWeight: '600' },
+    pill: { backgroundColor: 'rgba(52, 211, 153, 0.1)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12 },
+    pillText: { fontSize: 11, color: '#34D399', fontWeight: '600' }, // Keeping manual success color or use theme.colors.gradient.success[1]
 
-    heroDivider: { width: 40, height: 4, backgroundColor: '#ECEFF1', borderRadius: 2, marginBottom: 16 },
-    heroSub: { fontSize: 14, color: '#546E7A', textAlign: 'center', lineHeight: 20 },
+    heroDivider: { width: 40, height: 4, backgroundColor: theme.colors.border, borderRadius: 2, marginBottom: 16 },
+    heroSub: { fontSize: 14, color: theme.colors.text.secondary, textAlign: 'center', lineHeight: 20 },
     heroInfoRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 12 },
-    heroFooterText: { fontSize: 11, color: '#B0BEC5', fontStyle: 'italic' },
+    heroFooterText: { fontSize: 11, color: theme.colors.text.muted, fontStyle: 'italic' },
 
     // Card 3: Assumptions
-    slimCard: { backgroundColor: '#FFF', borderRadius: 16, elevation: 1, borderWidth: 1, borderColor: '#ECEFF1' },
+    slimCard: { backgroundColor: theme.colors.background.surface, borderRadius: 16, elevation: 1 }, // Removed border
     assumptionsGrid: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, paddingBottom: 16 },
     assumptionItem: { flexDirection: 'row', alignItems: 'center' },
-    assumptionLabel: { fontSize: 10, color: '#90A4AE', marginBottom: 2 },
-    assumptionValue: { fontSize: 13, fontWeight: '700', color: '#455A64' },
-    verticalLine: { width: 1, height: 24, backgroundColor: '#ECEFF1' },
-    slimFooter: { fontSize: 10, color: '#B0BEC5', padding: 12, textAlign: 'center', fontStyle: 'italic', backgroundColor: '#F9FAFB', borderBottomLeftRadius: 16, borderBottomRightRadius: 16 },
+    assumptionLabel: { fontSize: 10, color: theme.colors.text.secondary, marginBottom: 2 },
+    assumptionValue: { fontSize: 13, fontWeight: '700', color: theme.colors.text.primary },
+    verticalLine: { width: 1, height: 24, backgroundColor: theme.colors.border },
+    slimFooter: { fontSize: 10, color: theme.colors.text.muted, padding: 12, textAlign: 'center', fontStyle: 'italic', backgroundColor: '#F5F7FA', borderBottomLeftRadius: 16, borderBottomRightRadius: 16 }, // Lighter footer
 
     // CTA
     ctaWrapper: { paddingBottom: 4 },
-    ctaButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 18, borderRadius: 16, gap: 8, elevation: 4, shadowColor: '#2196F3', shadowOpacity: 0.2, shadowOffset: { width: 0, height: 4 } },
+    ctaButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 18, borderRadius: 16, gap: 8, elevation: 4, shadowColor: theme.colors.text.accent, shadowOpacity: 0.2, shadowOffset: { width: 0, height: 4 } },
     ctaText: { color: '#FFF', fontWeight: '700', fontSize: 16 },
-    ctaHelper: { textAlign: 'center', marginTop: 12, fontSize: 11, color: '#90A4AE' },
+    ctaHelper: { textAlign: 'center', marginTop: 12, fontSize: 11, color: theme.colors.text.muted },
 });

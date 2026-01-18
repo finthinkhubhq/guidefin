@@ -102,8 +102,7 @@ export default function RootLayout() {
             initialRouteName="index"
           >
             <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen name="auth/signin" options={{ headerShown: false }} />
-            <Stack.Screen name="wizard/step2" options={{ headerShown: false }} />
+            <Stack.Screen name="wizard/calculator" options={{ headerShown: false, animation: 'slide_from_right' }} />
             <Stack.Screen name="dashboard" options={{ headerShown: false }} />
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen

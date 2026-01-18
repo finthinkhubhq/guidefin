@@ -22,7 +22,8 @@ export default function RealityCheckScreen() {
 
     useEffect(() => {
         // Run Simulation on Mount
-        const currentMonthly = expenses.reduce((sum, item) => sum + item.monthly, 0);
+        // Fix: expenses array might be empty if coming from new calculator. Use settings.monthlyExpenses.
+        const currentMonthly = settings.monthlyExpenses || expenses.reduce((sum, item) => sum + item.monthly, 0);
 
         // 1. Get Baseline Corpus (What we have on dashboard)
         const baseline = calculateRetirementCorpus({
@@ -59,8 +60,8 @@ export default function RealityCheckScreen() {
         return (
             <SafeAreaView style={styles.container}>
                 <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                    <Text style={{ fontWeight: '700', color: '#90A4AE', marginBottom: 16 }}>Running 3,000 Scenarios...</Text>
-                    <ProgressBar indeterminate color="#1976D2" style={{ width: 200, height: 4, borderRadius: 2 }} />
+                    <Text style={{ fontWeight: '700', color: theme.colors.text.secondary, marginBottom: 16 }}>Running 3,000 Scenarios...</Text>
+                    <ProgressBar indeterminate color={theme.colors.text.accent} style={{ width: 200, height: 4, borderRadius: 2 }} />
                 </View>
             </SafeAreaView>
         );
@@ -74,8 +75,8 @@ export default function RealityCheckScreen() {
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => router.back()} style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <MaterialCommunityIcons name="arrow-left" size={24} color="#546E7A" />
-                    <Text style={{ marginLeft: 8, fontSize: 16, fontWeight: '600', color: '#546E7A' }}>Back</Text>
+                    <MaterialCommunityIcons name="arrow-left" size={24} color={theme.colors.text.secondary} />
+                    <Text style={{ marginLeft: 8, fontSize: 16, fontWeight: '600', color: theme.colors.text.secondary }}>Back</Text>
                 </TouchableOpacity>
             </View>
 
@@ -88,10 +89,10 @@ export default function RealityCheckScreen() {
                         <Text style={[styles.heroValue, { color: color }]}>{result.successRate.toFixed(0)}%</Text>
                         <View style={styles.heroDivider} />
                         <Text style={styles.heroSub}>
-                            Chance your money lasts till age <Text style={{ fontWeight: '800', color: '#37474F' }}>{lifeExpectancy}</Text>
+                            Chance your money lasts till age <Text style={{ fontWeight: '800', color: theme.colors.text.primary }}>{lifeExpectancy}</Text>
                         </Text>
                         <View style={styles.heroFooter}>
-                            <MaterialCommunityIcons name="robot-outline" size={14} color="#90A4AE" style={{ marginRight: 6 }} />
+                            <MaterialCommunityIcons name="robot-outline" size={14} color={theme.colors.text.muted} style={{ marginRight: 6 }} />
                             <Text style={styles.heroFooterText}>Based on {result.simulationCount.toLocaleString()} simulated market scenarios</Text>
                         </View>
                     </View>
@@ -101,7 +102,7 @@ export default function RealityCheckScreen() {
                 <Card style={styles.card}>
                     <View style={styles.cardHeader}>
                         <Text style={styles.cardTitle}>What does this mean?</Text>
-                        <MaterialCommunityIcons name="help-circle-outline" size={16} color="#90A4AE" />
+                        <MaterialCommunityIcons name="help-circle-outline" size={16} color={theme.colors.text.muted} />
                     </View>
                     <View style={styles.cardContent}>
                         <Text style={styles.contextText}>
@@ -114,7 +115,7 @@ export default function RealityCheckScreen() {
                 <Card style={styles.card}>
                     <View style={styles.cardHeader}>
                         <Text style={styles.cardTitle}>Possible Outcomes</Text>
-                        <MaterialCommunityIcons name="chart-bell-curve" size={16} color="#90A4AE" />
+                        <MaterialCommunityIcons name="chart-bell-curve" size={16} color={theme.colors.text.muted} />
                     </View>
                     <View style={styles.scenarios}>
 
@@ -150,7 +151,7 @@ export default function RealityCheckScreen() {
                 {/* CTA */}
                 <TouchableOpacity activeOpacity={0.9} onPress={() => router.push('/analysis/optimizer')}>
                     <LinearGradient
-                        colors={['#2196F3', '#1976D2']}
+                        colors={theme.colors.gradient.button as unknown as string[]}
                         style={styles.ctaButton}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 0 }}
@@ -165,37 +166,40 @@ export default function RealityCheckScreen() {
     );
 }
 
+// Theme Import
+import { theme } from '../../src/theme';
+
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#F5F7FA' },
+    container: { flex: 1, backgroundColor: theme.colors.background.primary },
     header: { paddingHorizontal: 20, paddingTop: 10, paddingBottom: 10 },
     content: { flex: 1, padding: 20, paddingTop: 10 },
 
     // Hero
-    heroCard: { backgroundColor: '#FFF', borderRadius: 20, marginBottom: 16, elevation: 4 },
+    heroCard: { backgroundColor: theme.colors.background.secondary, borderRadius: 20, marginBottom: 16, elevation: 4 }, // Removed border
     heroContent: { padding: 24, alignItems: 'center' },
-    heroTitle: { fontSize: 11, fontWeight: '700', color: '#90A4AE', letterSpacing: 1.5, marginBottom: 8 },
+    heroTitle: { fontSize: 11, fontWeight: '700', color: theme.colors.text.secondary, letterSpacing: 1.5, marginBottom: 8 },
     heroValue: { fontSize: 48, fontWeight: '800', marginBottom: 16 },
-    heroDivider: { width: '100%', height: 1, backgroundColor: '#F5F5F5', marginBottom: 16 },
-    heroSub: { fontSize: 15, color: '#546E7A', marginBottom: 16, textAlign: 'center' },
+    heroDivider: { width: '100%', height: 1, backgroundColor: theme.colors.border, marginBottom: 16 },
+    heroSub: { fontSize: 15, color: theme.colors.text.secondary, marginBottom: 16, textAlign: 'center', lineHeight: 22 },
     heroFooter: { flexDirection: 'row', alignItems: 'center' },
-    heroFooterText: { fontSize: 10, color: '#90A4AE', fontStyle: 'italic' },
+    heroFooterText: { fontSize: 10, color: theme.colors.text.muted, fontStyle: 'italic' },
 
     // Card Styles
-    card: { backgroundColor: '#FFF', borderRadius: 16, marginBottom: 16, elevation: 2 },
-    cardHeader: { flexDirection: 'row', justifyContent: 'space-between', padding: 16, borderBottomWidth: 1, borderBottomColor: '#F5F5F5' },
-    cardTitle: { fontSize: 12, fontWeight: '700', color: '#90A4AE', textTransform: 'uppercase', letterSpacing: 0.5 },
+    card: { backgroundColor: theme.colors.background.surface, borderRadius: 16, marginBottom: 16, elevation: 2 }, // Removed border
+    cardHeader: { flexDirection: 'row', justifyContent: 'space-between', padding: 16, borderBottomWidth: 1, borderBottomColor: theme.colors.border },
+    cardTitle: { fontSize: 12, fontWeight: '700', color: theme.colors.text.muted, textTransform: 'uppercase', letterSpacing: 0.5 },
     cardContent: { padding: 20 },
-    contextText: { fontSize: 16, color: '#455A64', lineHeight: 24 },
+    contextText: { fontSize: 16, color: theme.colors.text.primary, lineHeight: 24 },
 
     scenarios: { padding: 16 },
     scenarioRow: { flexDirection: 'row', alignItems: 'center', marginVertical: 4 },
-    divider: { height: 1, backgroundColor: '#F5F5F5', marginVertical: 12 },
+    divider: { height: 1, backgroundColor: theme.colors.border, marginVertical: 12 },
 
     scenarioIconRed: { width: 32, height: 32, borderRadius: 16, backgroundColor: '#FFEBEE', alignItems: 'center', justifyContent: 'center', marginRight: 12 },
     scenarioIconGreen: { width: 32, height: 32, borderRadius: 16, backgroundColor: '#E8F5E9', alignItems: 'center', justifyContent: 'center', marginRight: 12 },
 
-    scenarioLabel: { fontSize: 14, fontWeight: '700', color: '#37474F', marginBottom: 2 },
-    scenarioDesc: { fontSize: 13, color: '#546E7A' },
+    scenarioLabel: { fontSize: 14, fontWeight: '700', color: theme.colors.text.primary, marginBottom: 2 },
+    scenarioDesc: { fontSize: 13, color: theme.colors.text.secondary },
 
     // CTA
     ctaButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 16, borderRadius: 16, gap: 8, elevation: 4, marginBottom: 8 },

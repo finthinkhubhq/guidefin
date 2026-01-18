@@ -45,6 +45,8 @@ export interface UserSettings {
   retirementAge: number;
   lifeExpectancy: number; // added
   inflation: number; // as percentage (e.g., 5 for 5%)
+  monthlyExpenses?: number;
+  currentCorpus?: number;
 }
 
 export interface UserSettingsState {
